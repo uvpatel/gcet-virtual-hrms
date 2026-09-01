@@ -15,39 +15,39 @@ import {
 
 export type UserRole = "ADMIN" | "EMPLOYEE";
 
-export const getSidebarData = (role: UserRole) => ({
+export const getSidebarData = (role: UserRole, user?: { name?: string; email?: string; image?: string }) => ({
   user: {
-    name: "Urvil Patel",
-    email: "urvil@example.com",
-    avatar: "/avatars/user.jpg",
+    name: user?.name || "Patel Urvil",
+    email: user?.email || "uvpatel7271@gmail.com",
+    avatar: user?.image || "/avatars/user.jpg",
   },
 
   navMain:
     role === "ADMIN"
       ? [
           {
-            title: "Dashboard",
-            url: "/dashboard/admin",
+            title: "Admin Dashboard",
+            url: "/admin/dashboard",
             icon: IconDashboard,
           },
           {
             title: "Employees",
-            url: "/dashboard/employees",
+            url: "/dashboard/employee",
             icon: IconUsers,
           },
           {
-            title: "Attendance",
-            url: "/dashboard/attendance",
+            title: "Attendance Management",
+            url: "/admin/attendence",
             icon: IconCalendar,
           },
           {
             title: "Leave Approvals",
-            url: "/dashboard/leaves/approvals",
+            url: "/admin/leaves",
             icon: IconChecklist,
           },
           {
-            title: "Payroll",
-            url: "/dashboard/payroll/manage",
+            title: "Payroll Management",
+            url: "/admin/payroll",
             icon: IconWallet,
           },
         ]

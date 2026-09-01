@@ -17,12 +17,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-import { getSidebarData } from "@/config/sidebar-data"
-import { useAuthStore } from "@/store/useAuthStore"
+import { getSidebarData, UserRole } from "@/config/sidebar-data"
+import { useSession } from "@/lib/auth-client"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const role = useAuthStore((s) => s.user?.role ?? "EMPLOYEE")
-  const data = getSidebarData(role)
+  const { data: session } = useSession()
+  const rawRole = ((session?.user as any)?.role || "ADMIN").toUpperCase()
+  const role: UserRole = rawRole === "ADMIN" ? "ADMIN" : "EMPLOYEE"
+  const data = getSidebarData(role, session?.user as any)
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
