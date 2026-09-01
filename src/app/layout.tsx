@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Navbar }  from "@/components/shared/Navbar/Navbar"
+
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer  from "@/components/shared/Footer/Footer";
 
 import { ViewTransitions } from 'next-view-transitions'
+import { ThemeProvider } from "@/providers/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const geistSans = Geist({
@@ -31,18 +33,21 @@ export default function RootLayout({
 }>) {
   return (
     <ViewTransitions>
-
-    <ClerkProvider>
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased suppressHydrationWarning`}
           >
-          <Navbar />
-          {children}
-           <Footer />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+           {children}
+           <Toaster />
+          </ThemeProvider>
         </body>
       </html>
-    </ClerkProvider>
-          </ViewTransitions>
+    </ViewTransitions>
   );
 }

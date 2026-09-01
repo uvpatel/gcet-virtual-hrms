@@ -1,59 +1,55 @@
-// // lib/auth.ts
-// import jwt from "jsonwebtoken";
-// import User from "@/models/User";
-// import { connectDB } from "./db";
+import { betterAuth } from "better-auth";
+import { MongoClient } from "mongodb";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { nextCookies } from "better-auth/next-js";
 
-// export async function requireAuth(req: Request) {
-//   const token = req.headers.get("authorization")?.split(" ")[1];
-//   if (!token) throw new Error("Unauthorized");
+const uri = process.env.MONGODB_URI!;
 
-//   const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-
-//   await connectDB();
-//   const user = await User.findById(decoded.userId);
-//   if (!user) throw new Error("User not found");
-
-//   return user;
-// }
-
-
-// lib/auth.ts
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // ← your auth config
-
-export type CurrentUser = {
-  id: string;
-  name: string | null;
-  email: string | null;
-  role?: string;
-  // ... other fields you need
-} | null;
-
-/**
- * Get current authenticated user on server components / server actions
- */
-export async function getCurrentUser(): Promise<CurrentUser> {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return null;
-  }
-
-  return {
-    id: session.user.id as string,
-    name: session.user.name,
-    email: session.user.email,
-    role: (session.user as any).role, // if you extend user model
-    // image: session.user.image,
-    // etc...
-  };
+declare global {
+  var _mongoClient: MongoClient | undefined;
 }
 
-// Optional: throw version for protected routes/actions
-export async function requireCurrentUser(): Promise<CurrentUser> {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("Unauthorized");
+let client: MongoClient;
+
+if (process.env.NODE_ENV === "development") {
+  if (!global._mongoClient) {
+    global._mongoClient = new MongoClient(uri);
   }
-  return user;
+  client = global._mongoClient;
+} else {
+  client = new MongoClient(uri);
 }
+
+const db = client.db();
+
+export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  secret: process.env.BETTER_AUTH_SECRET,
+  appName: "Papertrail",
+  advanced: {
+    database: {
+      joins: true,
+    },
+  },
+  database: mongodbAdapter(db, {
+    // Disable multi-document transactions to avoid MongoTransactionError on standalone MongoDB or during index creation
+    transaction: false,
+  }),
+
+  plugins: [nextCookies()],
+
+  emailAndPassword: {
+    enabled: true,
+  },
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    },
+  },
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 100,
+  },
+});

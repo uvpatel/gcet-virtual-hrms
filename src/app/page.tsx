@@ -1,25 +1,17 @@
 
-import { Suspense } from "react";
-import Hero from "@/components/shared/Hero";
-import { FetureSection } from "@/components/shared/Feature/FetureSection";
-import { LoaderOne } from "@/components/ui/loader";
-import { Delay } from "@/components/Delay";
 
-export default function Page() {
+import Hero from "@/components/shared/Hero";
+
+
+import FeaturesSectionDemo from "@/components/features-section-demo-1";
+import TeamShowcase from "@/components/teamshowcase";
+
+export default function HomePage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-screen items-center justify-center">
-          <LoaderOne />
-        </div>
-      }
-    >
-      <Delay>
-        <main>
+        <>
           <Hero />
-          <FetureSection />
-        </main>
-      </Delay>
-    </Suspense>
+          <FeaturesSectionDemo />
+          <TeamShowcase />
+        </>
   );
 }

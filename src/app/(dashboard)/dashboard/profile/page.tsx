@@ -1,4 +1,5 @@
 // app/dashboard/profile/page.tsx
+"use client";
 import { 
   Card, 
   CardContent, 
@@ -29,21 +30,12 @@ import {
 } from "@/components/ui/sidebar"
 
 import data from "../../data.json"
+import { authClient, useSession } from "@/lib/auth-client"
 
 
 export default function ProfilePage() {
   return (
-    <SidebarProvider
-    style={
-      {
-        "--sidebar-width": "calc(var(--spacing) * 72)",
-        "--header-height": "calc(var(--spacing) * 12)",
-      } as React.CSSProperties
-    }
-  >
-    <AppSidebar variant="inset" />
-    <SidebarInset>
-        <SiteHeader />
+   
     <div className="container mx-auto py-6 px-4 md:px-6 space-y-8">
       {/* Header + Quick Actions */}
       <Header />
@@ -57,8 +49,7 @@ export default function ProfilePage() {
       </div>
     </div>
 
-</SidebarInset>
-</SidebarProvider>
+
   )
 }
 
@@ -81,6 +72,9 @@ function Header() {
 }
 
 function ProfileCard() {
+
+   const { data: session, isPending, error } = authClient.useSession();
+  
   return(
     <div className="md:col-span-4 space-y-6">
     <Card className="overflow-hidden">
@@ -88,13 +82,13 @@ function ProfileCard() {
       <CardContent className="relative px-6 pb-6 -mt-16">
         <div className="flex flex-col items-center text-center">
           <Avatar className="h-32 w-32 border-4 border-background ring-2 ring-violet-500/30 mb-4">
-            <AvatarImage src="/avatars/uv.jpg" alt="Urvil Patel" />
+            <AvatarImage src={session?.user?.image ?? " "} alt="Urvil Patel" />
             <AvatarFallback className="text-4xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white">
               UP
             </AvatarFallback>
           </Avatar>
 
-          <h2 className="text-2xl font-bold">Urvil Patel</h2>
+          <h2 className="text-2xl font-bold">{session?.user?.name ?? "Urvil Patel"}</h2>
           <p className="text-muted-foreground">Software Engineer • DevFlow</p>
 
           <div className="mt-3 flex flex-wrap gap-2 justify-center">
