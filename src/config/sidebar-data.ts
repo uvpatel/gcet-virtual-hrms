@@ -27,7 +27,7 @@ export const getSidebarData = (role: UserRole, user?: { name?: string; email?: s
       ? [
           {
             title: "Admin Dashboard",
-            url: "/admin/dashboard",
+            url: "/dashboard/admin/dashboard",
             icon: IconDashboard,
           },
           {
@@ -37,17 +37,17 @@ export const getSidebarData = (role: UserRole, user?: { name?: string; email?: s
           },
           {
             title: "Attendance Management",
-            url: "/admin/attendence",
+            url: "/dashboard/admin/attendence",
             icon: IconCalendar,
           },
           {
             title: "Leave Approvals",
-            url: "/admin/leaves",
+            url: "/dashboard/admin/leaves",
             icon: IconChecklist,
           },
           {
             title: "Payroll Management",
-            url: "/admin/payroll",
+            url: "/dashboard/admin/payroll",
             icon: IconWallet,
           },
         ]
