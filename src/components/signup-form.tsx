@@ -90,6 +90,18 @@ export function SignupForm({
     }
   }
 
+
+/* 
+3.1.1 Sign Up
+● Users can register using:
+○ Employee ID
+○ Email
+○ Password
+○ Role Employee / HR
+● Password must follow security rules.
+● Email verification is required.
+*/
+
   return (
     <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
       <FieldGroup>

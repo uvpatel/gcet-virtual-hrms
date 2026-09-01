@@ -74,6 +74,13 @@ export function LoginForm({
     }
   }
 
+
+  /*
+  Users can log in using email and password.
+● Incorrect credentials should display error messages.
+● Successful login redirects to the dashboard.
+  */
+ 
   return (
     <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
       <FieldGroup>

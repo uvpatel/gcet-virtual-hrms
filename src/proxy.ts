@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { auth } from "@/lib/auth";
 
-export default async function proxy(request: NextRequest) {
-	const sessionCookie = getSessionCookie(request);
+export default async function proxy(req: NextRequest) {
+  const session = await auth.api.getSession({ headers: req.headers });
+  const { pathname } = req.nextUrl;
 
-    // THIS IS NOT SECURE!
-    // This is the recommended approach to optimistically redirect users
-    // We recommend handling auth checks in each page/route
-	if (!sessionCookie) {
-		return NextResponse.redirect(new URL("/login", request.url));
-	}
+  if (!session && pathname.startsWith("/(dashboard)")) {
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
 
-	return NextResponse.next();
+  const role = (session?.user as any)?.role;
+  if (pathname.startsWith("/admin") && role !== "admin") {
+    return NextResponse.redirect(new URL("/employee", req.url));
+  }
+
+  return NextResponse.next();
 }
 
-export const config = {
-	matcher: ["/dashboard/:path*", "/workspace/:path*"],
-};
+export const config = { matcher: ["/employee/:path*", "/admin/:path*"] };
